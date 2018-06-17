@@ -10,16 +10,20 @@ const Map = ReactMapboxGl({
 class App extends Component {
   render() {
     return (
+        <div>
+        <h1>stuff</h1>
         <Map
-          style="mapbox://styles/mapbox/basic-v9"
-          containerStyle={{ height: "100vh", width: "100vw" }}>
+          style = "mapbox://styles/mapbox/basic-v9"
+          center = {[-77.0369, 38.8852]}
+          containerStyle = {{ height: "100vh", width: "100vw" }}>
           <Layer
-            type="symbol"
-            id="marker"
-            layout={{ "icon-image": "marker-15" }}>
-            <Feature coordinates={[ -0.481747846041145, 51.3233379650232 ]}/>
+            type = "symbol"
+            id = "marker"
+            layout = {{ "icon-image": "marker-15" }}>
+            <Feature coordinates = {[ -77.03, 38.8852]}/>
           </Layer>
         </Map>
+        </div>
       );
   }
 }
