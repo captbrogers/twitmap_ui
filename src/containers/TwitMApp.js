@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import Mapbox from '../components/Mapbox'
-import { updateMapInfo, updateMapInfo2 } from '../actions/actionTypes'
+import { updateMapInfo, asyncUpdateMapInfo } from '../actions/actionTypes'
 
 
 // TRICKY: using ('s and )'s to wrap the return object to force ES* (5? 6? 7?)
@@ -15,8 +15,8 @@ const mapStateToProps = (state) => ({
 
 
 const mapDispatchToProps = (dispatch) => ({
-    updateMap: (mapInfo) => {
-        dispatch(updateMapInfo(mapInfo));
+    updateMapInfo: (mapInfo) => {
+        dispatch(asyncUpdateMapInfo(mapInfo));
     }
 });
 
@@ -24,10 +24,10 @@ const mapDispatchToProps = (dispatch) => ({
 class TwitMApp extends React.Component {
 
     render() {
-        return <Mapbox updateMap={
-            (mapInfo) => {this.props.updateMap(mapInfo)}
+        return <Mapbox updateMapInfo={
+            (mapInfo) => { this.props.updateMapInfo(mapInfo) }
         }
-        mapInfo={this.props.mapInfo}/>;
+        mapInfo={ this.props.mapInfo }/>;
     }
 }
 

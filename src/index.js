@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk'
 
 import mapInfo from './reducers/rootReducer';
 import mapboxgl from 'mapbox-gl'
@@ -15,10 +16,12 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmb
 
 const reduxLogger = createLogger({});
 
+const middlewares = [reduxLogger, thunk]
+
 const store = createStore(
     combineReducers({ mapInfo }),
     {},
-    applyMiddleware(reduxLogger)
+    applyMiddleware(...middlewares)
 );
 
 /*store.subscribe(() => {

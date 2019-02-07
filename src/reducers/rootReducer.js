@@ -3,7 +3,7 @@ const mapInfo = (state = {}, action) => {
         case "UPDATE_MAP_INFO":
             state = {
                 ...state,
-                mapInfo: action.payload.mapInfo
+                mapInfo: action.payload
             };
             break;
         default:
