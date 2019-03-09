@@ -1,12 +1,18 @@
 import mapboxgl from 'mapbox-gl'
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
+
+const mapStateToProps = (state) => ({
+    mapInfo: state.mapUpdateReducer.mapInfo,
+    observationData: state.mapUpdateReducer.observationData,
+});
 
 class Mapbox extends Component {
     constructor(props) {
         super(props);
-        this.state = { mapInfo: {} };
+
         this.debounceUpdateMapInfo = debounce(
             this.debounceUpdateMapInfo,
             300 // ms to delay
@@ -18,8 +24,7 @@ class Mapbox extends Component {
     };
 
     handleMapChange = (mapInfo) => {
-        this.setState({ mapInfo });
-        this.debounceUpdateMapInfo(this.state.mapInfo);
+        this.debounceUpdateMapInfo(mapInfo);
     };
 
     componentDidMount() {
@@ -27,7 +32,7 @@ class Mapbox extends Component {
             container: this.mapContainer,
             style: 'mapbox://styles/mapbox/streets-v9',
             center: [-118, 48],
-            zoom: 9
+            zoom: 9,
         })
 
         // TRICKY: The context of 'this' changes inside the mapboxgl
@@ -46,20 +51,28 @@ class Mapbox extends Component {
                 north: this.map.getBounds().getNorth(),
                 east: this.map.getBounds().getEast(),
                 south: this.map.getBounds().getSouth(),
-                west: this.map.getBounds().getWest()
+                west: this.map.getBounds().getWest(),
             };
+            let bb = boundingBox;
+            let boundingBoxPolygon = "POLYGON(( " + bb.east + " " + bb.north + ", " + bb.west + " " + bb.north + ", " + bb.west + " " + bb.south + ", " + bb.east + " " + bb.south + ", " + bb.east + " " + bb.north + " ))";
+
             mapChangeTrigger({
-                lat: lat,
-                lng: lng,
-                zoom: zoom,
-                boundingBox: boundingBox,
+                lat,
+                lng,
+                zoom,
+                boundingBox,
+                boundingBoxPolygon,
             });
         });
 
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (this.props === nextProps ? false : true);
+    }
+
     componentDidUpdate() {
-        // this gets called every time anything breathes on the mapbox
+        console.log('this props: ', this.props)
     }
 
     componentWillUnmount() {
@@ -79,7 +92,9 @@ class Mapbox extends Component {
     }
 }
 
-export default Mapbox;
+export default connect(
+    mapStateToProps
+)(Mapbox);
 
 Mapbox.propTypes= {
     updateMapInfo: PropTypes.func.isRequired,

@@ -5,7 +5,7 @@ import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk'
 
-import mapInfo from './reducers/rootReducer';
+import { mapUpdateReducer } from './reducers/rootReducer';
 import mapboxgl from 'mapbox-gl'
 
 import './index.css';
@@ -16,17 +16,16 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmb
 
 const reduxLogger = createLogger({});
 
-const middlewares = [reduxLogger, thunk]
+// TRICKY: The order here matters!  Without putting thunk first, the
+//         reduxLogger misses out on the definition of the action creators
+//         and the console will log 'undefined' as the action...
+const middlewares = [thunk, reduxLogger]
 
 const store = createStore(
-    combineReducers({ mapInfo }),
+    combineReducers({ mapUpdateReducer }),
     {},
     applyMiddleware(...middlewares)
 );
-
-/*store.subscribe(() => {
-    console.log("Store updated!", store.getState());
-});*/
 
 ReactDOM.render(
     <Provider store={store}>
