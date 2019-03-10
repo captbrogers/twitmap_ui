@@ -25,7 +25,7 @@ export const mapUpdateReducer = (state = initialState, action) => {
                 ...state,
                 observationData: {
                     observations: action.payload.data,
-                    numObservations: action.payload.numObservations
+                    numObservations: action.payload.num_observations
                 }
             }
             break;

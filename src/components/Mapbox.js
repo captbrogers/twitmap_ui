@@ -72,7 +72,13 @@ class Mapbox extends Component {
     }
 
     componentDidUpdate() {
-        console.log('this props: ', this.props)
+        //console.log('this props were updated: ', this.props)
+        for (var i = 0; i < this.props.observationData.numObservations; i++) {
+            let currentObservation = this.props.observationData.observations[i];
+            var marker = new mapboxgl.Marker()
+                .setLngLat([currentObservation['lng'], currentObservation['lat']])
+                .addTo(this.map);
+        }
     }
 
     componentWillUnmount() {

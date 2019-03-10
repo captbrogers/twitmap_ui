@@ -12,7 +12,7 @@ export const asyncUpdateMapInfo = (mapInfo) => {
         dispatch({ type: "FETCH_OBSERVATIONS_BEGIN", payload: "" });
         dispatch({ type: "UPDATE_MAP_INFO", payload: mapInfo });
 
-        let urlStem = "http://localhost:5001/observations"
+        let urlStem = "http://192.168.1.8:5001/observations"
         let encodedURL = encodeURI(urlStem)
 
         axios.post(encodedURL, {
