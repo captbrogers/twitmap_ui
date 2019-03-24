@@ -73,6 +73,8 @@ class Mapbox extends Component {
 
     componentDidUpdate() {
         //console.log('this props were updated: ', this.props)
+        // consider using a Mercator Point.  example:
+        // var helsinki = mapboxgl.MercatorCoordinate.fromLngLat({ lng: 25.004, lat: 60.239 });
         for (var i = 0; i < this.props.observationData.numObservations; i++) {
             let currentObservation = this.props.observationData.observations[i];
             var marker = new mapboxgl.Marker()
