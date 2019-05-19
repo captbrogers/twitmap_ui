@@ -4,7 +4,12 @@ export const FETCH_OBSERVATIONS_SUCCESS = "FETCH_OBSERVATIONS_SUCCESS";
 
 const initialState = {
     mapInfo: "no mapInfo yet",
-    observationData: "no numObservations yet",
+    observationData: {
+        observations: {
+            num_observations: 0,
+            geo_json: {}
+        }
+    },
 }
 
 export const mapUpdateReducer = (state = initialState, action) => {
@@ -24,8 +29,7 @@ export const mapUpdateReducer = (state = initialState, action) => {
             state = {
                 ...state,
                 observationData: {
-                    observations: action.payload.data,
-                    numObservations: action.payload.num_observations
+                    observations: action.payload.data
                 }
             }
             break;

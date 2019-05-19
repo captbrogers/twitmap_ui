@@ -65,6 +65,24 @@ class Mapbox extends Component {
             });
         });
 
+        this.map.on('load', () => {
+            this.map.addSource("observations_geojson", {
+              "type": "geojson",
+              "data": this.props.observationData.observations.geo_json
+            })
+            this.map.addLayer(
+                {id: 'observations',
+                type: 'symbol',
+                // Add a GeoJSON source containing place coordinates and information.
+                source: {
+                type: 'geojson',
+                data: {}
+                },
+                layout: {
+                'icon-allow-overlap': true,
+                }
+            });
+          });
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -75,12 +93,11 @@ class Mapbox extends Component {
         //console.log('this props were updated: ', this.props)
         // consider using a Mercator Point.  example:
         // var helsinki = mapboxgl.MercatorCoordinate.fromLngLat({ lng: 25.004, lat: 60.239 });
-        for (var i = 0; i < this.props.observationData.numObservations; i++) {
-            let currentObservation = this.props.observationData.observations[i];
-            var marker = new mapboxgl.Marker()
-                .setLngLat([currentObservation['lng'], currentObservation['lat']])
-                .addTo(this.map);
-        }
+        let blah = this.props;
+        console.log(blah);
+        this.map.getSource('observations_geojson').setData(
+            blah.observationData.observations.geo_json
+        )
     }
 
     componentWillUnmount() {
