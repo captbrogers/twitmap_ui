@@ -7,7 +7,10 @@ const initialState = {
     observationData: {
         observations: {
             num_observations: 0,
-            geo_json: {}
+            geo_json: {
+                "type": "FeatureCollection",
+                "features": []
+              }
         }
     },
 }

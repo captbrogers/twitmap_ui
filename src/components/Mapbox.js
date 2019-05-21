@@ -67,20 +67,17 @@ class Mapbox extends Component {
 
         this.map.on('load', () => {
             this.map.addSource("observations_geojson", {
-              "type": "geojson",
-              "data": this.props.observationData.observations.geo_json
+              type: "geojson",
+              data: this.props.observationData.observations.geo_json
             })
-            this.map.addLayer(
-                {id: 'observations',
+            this.map.addLayer({
+                id: 'observations_layer',
                 type: 'symbol',
-                // Add a GeoJSON source containing place coordinates and information.
-                source: {
-                type: 'geojson',
-                data: {}
-                },
-                layout: {
-                'icon-allow-overlap': true,
-                }
+                source: "observations_geojson",
+                /*layout: {
+                    'icon-image': 'zoo-15',
+                    'icon-allow-overlap': true,
+                }*/
             });
           });
     }
@@ -90,19 +87,23 @@ class Mapbox extends Component {
     }
 
     componentDidUpdate() {
-        //console.log('this props were updated: ', this.props)
-        // consider using a Mercator Point.  example:
-        // var helsinki = mapboxgl.MercatorCoordinate.fromLngLat({ lng: 25.004, lat: 60.239 });
-        let blah = this.props;
-        console.log(blah);
-        this.map.getSource('observations_geojson').setData(
-            blah.observationData.observations.geo_json
-        )
+        let observations_data = this.props.observationData.observations.geo_json;
+        let map = this.map;
+        observations_data.features.forEach(function(marker) {
+
+            // create a HTML element for each feature
+            var el = document.createElement('div');
+            el.className = 'marker';
+          
+            // make a marker for each feature and add to the map
+            new mapboxgl.Marker(el)
+              .setLngLat(marker.geometry.coordinates)
+              .addTo(map);
+          });
     }
 
     componentWillUnmount() {
         this.map.remove();
-        this.props.updateMap({});
     }
 
     render() {
