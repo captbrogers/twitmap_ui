@@ -4,6 +4,9 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
+import 'mapbox-gl/dist/mapbox-gl.css';
+import red_marker from '../assets/icons/marker.png';
+
 const mapStateToProps = (state) => ({
     mapInfo: state.mapUpdateReducer.mapInfo,
     observationData: state.mapUpdateReducer.observationData,
@@ -32,26 +35,31 @@ class Mapbox extends Component {
             container: this.mapContainer,
             style: 'mapbox://styles/mapbox/streets-v9',
             center: [-118, 48],
-            zoom: 9,
+            zoom: 10,
         })
 
+        let map = this.map;
+
         // TRICKY: The context of 'this' changes inside the mapboxgl
-        //         on move method.  Soooo we get around that by wrapping.
+        //         on move method.  Soooo we get around that by wrapping
+        //         the move handler.
         let mapChangeTrigger = this.handleMapChange;
 
         let lng = 0, lat = 0, zoom = 0;
         let boundingBox = {};
 
+        map.addControl(new mapboxgl.NavigationControl());
+
         // (indirectly) set component state on map move
-        this.map.on('move', () => {
-            lat = this.map.getCenter().lat.toFixed(4);
-            lng = this.map.getCenter().lng.toFixed(4);
-            zoom = this.map.getZoom().toFixed(2);
+        map.on('move', () => {
+            lat = map.getCenter().lat.toFixed(4);
+            lng = map.getCenter().lng.toFixed(4);
+            zoom = map.getZoom().toFixed(2);
             boundingBox = {
-                north: this.map.getBounds().getNorth(),
-                east: this.map.getBounds().getEast(),
-                south: this.map.getBounds().getSouth(),
-                west: this.map.getBounds().getWest(),
+                north: map.getBounds().getNorth(),
+                east: map.getBounds().getEast(),
+                south: map.getBounds().getSouth(),
+                west: map.getBounds().getWest(),
             };
             let bb = boundingBox;
             let boundingBoxPolygon = "POLYGON(( " + bb.east + " " + bb.north + ", " + bb.west + " " + bb.north + ", " + bb.west + " " + bb.south + ", " + bb.east + " " + bb.south + ", " + bb.east + " " + bb.north + " ))";
@@ -65,21 +73,25 @@ class Mapbox extends Component {
             });
         });
 
-        this.map.on('load', () => {
-            this.map.addSource("observations_geojson", {
-              type: "geojson",
-              data: this.props.observationData.observations.geo_json
-            })
-            this.map.addLayer({
+        map.on('load', () => {
+            map.loadImage(red_marker, (error, image) => {
+                if (error) throw error;
+                map.addImage('red_marker', image);
+            });
+            map.addSource("observations_geojson", {
+                type: "geojson",
+                data: this.props.observationData.observations.geo_json
+            });
+            map.addLayer({
                 id: 'observations_layer',
                 type: 'symbol',
-                source: "observations_geojson",
+                source: 'observations_geojson',
                 /*layout: {
-                    'icon-image': 'zoo-15',
+                    'icon-image': 'red_marker',
                     'icon-allow-overlap': true,
                 }*/
             });
-          });
+        });
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -88,18 +100,7 @@ class Mapbox extends Component {
 
     componentDidUpdate() {
         let observations_data = this.props.observationData.observations.geo_json;
-        let map = this.map;
-        observations_data.features.forEach(function(marker) {
-
-            // create a HTML element for each feature
-            var el = document.createElement('div');
-            el.className = 'marker';
-          
-            // make a marker for each feature and add to the map
-            new mapboxgl.Marker(el)
-              .setLngLat(marker.geometry.coordinates)
-              .addTo(map);
-          });
+        this.map.getSource('observations_geojson').setData(observations_data);
     }
 
     componentWillUnmount() {
