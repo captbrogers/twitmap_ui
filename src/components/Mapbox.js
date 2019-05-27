@@ -1,11 +1,13 @@
-import mapboxgl from 'mapbox-gl'
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import debounce from 'lodash/debounce'
+import mapboxgl from 'mapbox-gl';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import debounce from 'lodash/debounce';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
-import red_marker from '../assets/icons/marker.png';
+
+import images from '../assets';
+
 
 const mapStateToProps = (state) => ({
     mapInfo: state.mapUpdateReducer.mapInfo,
@@ -30,12 +32,23 @@ class Mapbox extends Component {
         this.debounceUpdateMapInfo(mapInfo);
     };
 
+    loadSchoolIcons = (mapbox_map) => {
+        Object.keys(images).forEach((image_name) => {
+            mapbox_map.loadImage(
+                images[image_name], (error, image) => {
+                    if (error) throw error;
+                    mapbox_map.addImage(image_name.slice(0, -4), image);
+                }
+            )
+        });
+    };
+
     componentDidMount() {
         this.map = new mapboxgl.Map({
             container: this.mapContainer,
-            style: 'mapbox://styles/mapbox/streets-v9',
-            center: [-118, 48],
-            zoom: 10,
+            style: 'mapbox://styles/mapbox/dark-v10',
+            center: [-117.5, 47.5],
+            zoom: 8,
         })
 
         let map = this.map;
@@ -74,10 +87,8 @@ class Mapbox extends Component {
         });
 
         map.on('load', () => {
-            map.loadImage(red_marker, (error, image) => {
-                if (error) throw error;
-                map.addImage('red_marker', image);
-            });
+            this.loadSchoolIcons(map);
+            
             map.addSource("observations_geojson", {
                 type: "geojson",
                 data: this.props.observationData.observations.geo_json,
@@ -99,11 +110,11 @@ class Mapbox extends Component {
                     "circle-color": [
                         "step",
                         ["get", "point_count"],
-                        "#51bbd6",
+                        "#cccccc",
                         100,
-                        "#f1f075",
+                        "#999999",
                         750,
-                        "#f28cb1"
+                        "#666666"
                     ],
                     "circle-radius": [
                         "step",
@@ -123,33 +134,25 @@ class Mapbox extends Component {
                 filter: ["has", "point_count"],
                 layout: {
                     "text-field": "{point_count_abbreviated}",
-                    "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+                    "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
                     "text-size": 12
                 }
                 });
-
-            map.addLayer({
-                id: "unclustered-point",
-                type: "circle",
-                source: "observations_geojson",
-                filter: ["!", ["has", "point_count"]],
-                /*paint: {
-                    "circle-color": "#11b4da",
-                    "circle-radius": 4,
-                    "circle-stroke-width": 1,
-                    "circle-stroke-color": "#fff"
-                }*/
-                layout: {
-                    'icon-image': 'red_marker',
-                }
-            });
             map.addLayer({
                 id: 'observations_layer',
                 type: 'symbol',
                 source: 'observations_geojson',
+                filter: ["!", ["has", "point_count"]],
                 layout: {
-                    //'icon-image': 'red_marker',
                     'icon-allow-overlap': true,
+                    "icon-image": '{icon}',
+                    "text-field": "{title}",
+                    "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                    "text-offset": [0, 0.6],
+                    "text-anchor": "top"
+                },
+                paint: {
+                    'text-color': '#ffffff',
                 }
             });
         });
