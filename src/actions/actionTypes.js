@@ -17,7 +17,7 @@ export const asyncUpdateMapInfo = (mapInfo) => {
         let encodedURL = encodeURI(urlStem)
 
         axios.post(encodedURL, {
-            box: mapInfo.boundingBoxPolygon,
+            bbox: mapInfo.boundingBoxPolygon,
         })
         .then(
             (response) => {
