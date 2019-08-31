@@ -163,7 +163,7 @@ class Mapbox extends Component {
     }
 
     componentDidUpdate() {
-        let observations_data = this.props.observationData.observations.geo_json;
+        let observations_data = this.props.observationData.observations.data;
         this.map.getSource('observations_geojson').setData(observations_data);
     }
 
