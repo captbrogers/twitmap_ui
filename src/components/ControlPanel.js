@@ -4,7 +4,8 @@ class ControlPanel extends Component {
 
     divStyle = {
         background: 'red',
-
+        position: 'absolute',
+        zIndex: '50',
       };
 
     render() {
