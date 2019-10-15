@@ -6,11 +6,12 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk'
 
 import { mapUpdateReducer } from './reducers/rootReducer';
-import mapboxgl from 'mapbox-gl'
-
-import './index.css';
-import TwitMApp from './containers/TwitMApp';
+import mapboxgl from 'mapbox-gl';
 import registerServiceWorker from './registerServiceWorker';
+import './index.css';
+
+import TwitMApp from './containers/TwitMApp';
+import ControlPanel from './components/ControlPanel';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA';
 
@@ -29,6 +30,7 @@ const store = createStore(
 
 ReactDOM.render(
     <Provider store={store}>
+        <ControlPanel />
         <TwitMApp />
     </Provider>, document.getElementById('root')
 );

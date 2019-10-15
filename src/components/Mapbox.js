@@ -177,6 +177,7 @@ class Mapbox extends Component {
             top: 0,
             bottom: 0,
             width: '100%',
+            height: '100%',
         };
 
         return <div style={map_canvas_style} ref={el => this.mapContainer = el} />;

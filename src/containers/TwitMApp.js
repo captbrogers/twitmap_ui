@@ -25,11 +25,14 @@ const mapDispatchToProps = (dispatch) => ({
 class TwitMApp extends Component {
 
     render() {
-        return <Mapbox updateMapInfo={
+        const style = {
+        };    
+
+        return <div style={style}><Mapbox updateMapInfo={
             (mapInfo) => { this.props.updateMapInfo(mapInfo) }
         }
         //mapInfo={ this.props.mapInfo }/>;
-        />;
+        /></div>;
     }
 }
 
